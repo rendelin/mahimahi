@@ -39,19 +39,14 @@ Identifier           = [:jletter][:jletterdigit:]*
 
 DecIntegerLiteral    = 0 | [1-9][0-9]*
 
+ColorLiteral         = "Meggy.Color."("DARK" | "RED" | "ORANHE" | "YELLOW" | "GREEN" | "BLUE" | "VIOLET" | "WHITE")
+ButtonLiteral        = "Meggy.Button."("A" | "B" | "Up" | "Down" | "Left" | "Right")
+ToneLiteral          = "Meggy.Tone."("C3" | "D3" | "E3" | "F3" | "G3" | "A3" | "B3" | "Cs3" | "Ds3" | "Fs3" | "Gs3" | "As3")
+
 %state STRING
 
 %%
-
-<YYINITIAL> "int"      {return symbol(sym.INT);}
-
 <YYINITIAL> {
-  {Identifier}         {return symbol(sym.IDENTIFIER);}
-  {DecIntegerLiteral}  {return symbol(sym.INTEGER_LITERAL);}
-  \"                   { string.setLength(0); yybegin(STRING);}
-  {Comments}           { }
-  {WhiteSpace}         { }
-
   /* Meggy Java Operators */
   "+"                    {return symbol(sym.PLUS);}
   "-"                    {return symbol(sym.MINUS);}
@@ -75,14 +70,61 @@ DecIntegerLiteral    = 0 | [1-9][0-9]*
   "boolean"           {return symbol(sym.BOOLEAN)}
   "int"               {return symbol(sym.INT)}
   "byte"              {return symbol(sym.BYTE)}
+  "String"            {return symbol(sym.STRING_TYPE)}
+  "void"              {return symbol(sym.VOID)}
   "Meggy.Color"       {return symbol(sym.COLOR)}
   "Meggy.Button"      {return symbol(sym.BUTTON)}
   "Meggy.Tone"        {return symbol(sym.TONE)}
+
+  /* Meggy Java Keyword */
+  "main"              {return symbol(sym.MAIN)}
+  "if"                {return symbol(sym.IF)}
+  "else"              {return symbol(sym.ELSE)}
+  "while"             {return symbol(sym.WHILE)}
+  "public"            {return symbol(sym.PUBLIC)}
+  "return"            {return symbol(sym.RETURN)}
+  "static"            {return symbol(sym.STATIC)}
+  "this"              {return symbol(sym.THIS)}
+  "class"             {return symbol(sym.CLASS)}
+  "extends"           {return symbol(sym.EXTENDS)}
+  "new"               {return symbol(sym.NEW)}
+  "import"            {return symbol(sym.IMPORT)}
+
+  /* Meggy Java Constants */
+  "meggy.Meggy"              {return symbol(sym.MEGGY)}  
+  {ColorLiteral}             {return symbol(sym.COLOR_LITERAL)}  
+  {ButtonLiteral}            {return symbol(sym.BUTTON_LITERAL)}
+  {ToneLiteral}              {return symbol(sym.TONE_LITERAL)}
+  {DecIntegerLiteral}  {return symbol(sym.INTEGER_LITERAL);}
+  "true"                     {return symbol(sym.TRUE)}
+  "false"                    {return symbol(sym.FALSE)}
+
+
+  /* Meggy Java Statements keywords */
+  "Meggy.setPixel"            {return symbol(sym.MEGGYSETPIXEL)}  
+  "Meggy.setAuxLEDs"          {return symbol(sym.MEGGYSETAUXLEDS)}  
+  "Meggy.toneStart"           {return symbol(sym.MEGGYTONESTART)}  
+  "Meggy.delay"               {return symbol(sym.MEGGYDELAY)}  
+  "Meggy.getPixel"            {return symbol(sym.MEGGYGETPIXEL)}  
+  "Meggy.checkButton"         {return symbol(sym.MEGGYCHECKBUTTON)}
+
+  {Identifier}         {return symbol(sym.IDENTIFIER);}
+
+  \"                   { string.setLength(0); yybegin(STRING);}
+  {Comments}           { }
+  {WhiteSpace}         { }
 }
 
 <STRING>{
   \"                   {yybegin(YYINITIAL); return symbol(sym.STRING_LITERAL, string.toString());}
+  [^\n\r\"\\]+         { string.append( yytext()); }
+  \\n                  { string.append('\n'); }
   \\                   { string.append('\\'); }
+  \\\"                 { string.append('\"'); }
+  \\r                  { string.append('\r'); }
+  \\t                  { string.append('\t'); }
 }
+
+[^]                    { throw new Error("Illegal character <" + yytext() + ">");}
 
 
