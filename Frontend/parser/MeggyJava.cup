@@ -1,36 +1,74 @@
 // CUP specification for a simple expression evaluator (w/ actions)
+package mahimahi.parser;
+import mahimahi.parser.SymbolValue;
 import java_cup.runtime.*;
+import java.util.*;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /* Preliminaries to set up and use the scanner.  */
-init with {: scanner.init();   StringBuffer text = new StringBuffer(); :};
-scan with {: return scanner.next_token(); :};
+parser code {:  
+             public PrintWriter out;
+	     public String programName;
+
+       	     public void unrecovered_syntax_error(Symbol cur_SymbolValue) {
+               report_fatal_error("Fatal syntax error", cur_SymbolValue);
+             }
+
+	     public void report_fatal_error(String message, Object info) {
+               Symbol symbolValue = (Symbol)info;
+	       SymbolValue tok = (SymbolValue)symbolValue.value;
+
+               report_error(message, info); done_parsing();
+               throw new ParseException("Fatal parsing error", tok.line, tok.pos);
+             }
+       
+             public void report_error(String message, Object info) {
+	       Symbol symbolValue = (Symbol) info;
+	       SymbolValue tok = (SymbolValue) symbolValue.value;
+	       System.err.println("[" + tok.line + "," + tok.pos + "]" + message + " at " + tok.toString() );
+             }            
+       
+             :}
+
+action code {: private PrintStream sout; :}
 
 /*********** Terminals (tokens returned by the scanner). ***********/
 /* operators */
-terminal            PLUS, MINUS, TIMES, ASSIGN, EQUAL, AND, LT, NOT, COMMA, DOT;
-terminal            LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI;
+terminal  SymbolValue            PLUS, MINUS, TIMES, ASSIGN, EQUAL, AND, LT, NOT, COMMA, DOT;
+terminal  SymbolValue            LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI;
 
 /* types */
-terminal            BOOLEAN, INT, BYTE, STRING_TYPE, VOID, COLOR, BUTTON, TONE, STRING;
+terminal  SymbolValue            BOOLEAN, INT, BYTE, STRING_TYPE, VOID, COLOR, BUTTON, TONE;
 
-terminal            IDENTIFIER;
+terminal  SymbolValue            IDENTIFIER;
 
 /* keywords */
-terminal            MAIN, IF, ELSE, WHILE, PUBLIC, RETURN, STATIC, THIS, CLASS, EXTENDS, NEW;
+terminal  SymbolValue            MAIN, IF, ELSE, WHILE, PUBLIC, RETURN, STATIC, THIS, CLASS, EXTENDS, NEW;
 
 /* constants */
-terminal  INT     INT_LITERAL;
-terminal  COLOR   COLOR_LITERAL;
-terminal  BUTTON  BUTTON_LITERAL;
-terminal  TONE    TONE_LITERAL;
+terminal  SymbolValue    INT_LITERAL;
+terminal  SymbolValue    COLOR_LITERAL;
+terminal  SymbolValue    BUTTON_LITERAL;
+terminal  Symbolvalue    STRING_LITERAL;
+terminal  SymbolValue    TONE_LITERAL;
+terminal  SymbolValue    TRUE, FALSE;
 
 /* others */
-terminal            IMPORT, MEGGY;
-terminal            MEGGYSETPIXEL;
+terminal  SymbolValue    IMPORT, MEGGY;
+terminal  SymbolValue    MEGGYSETPIXEL, MEGGYSETAUXLEDS, 
+	                 MEGGYTONESTART, MEGGYDELAY, MEGGYGETPIXEL, MEGGYCHECKBUTTON;
 
 
 /*********** Non-terminals ***********/
-non terminal            Goal, MainClass, Statement, Expression;
+non terminal               Goal, MainClass, Statement_list, Statement, Empty;
+non terminal  SymbolValue  Expression;
 
 /* Precedences */
 precedence left  ASSIGN;
@@ -41,23 +79,33 @@ precedence right NOT, MINUS ;
 precedence left  DOT;
 
 /* The grammar */
+start with Goal;
+
 Goal   ::=     IMPORT MEGGY SEMI 
-               {: text.append("import meggy.Meggy;");  :}
                MainClass 
-               SEMI {: text.append(";\n"); :}
                ;
 
 MainClass ::=  CLASS IDENTIFIER:id 
-               {: test.append("class " + id.value() + "\n"); :}
-               LBRACE PUBLIC STATIC VOID MAIN LPAREN STRING LBRACKET RBRACKET IDENTIFIER RPAREN
-               LBRACE Statement RBRACE RBRACE;
+               {: sout = new PrintStream(new FileOutputStream(id.lexeme + ".java.s")); 
+	          parser.out = new PrintWriter(sout);
+	       	:}
+               LBRACE PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LBRACKET RBRACKET IDENTIFIER RPAREN
+               LBRACE Statement RBRACE RBRACE
+	       {: parser.out.flush(); :};
 
-Statement ::=  MEGGYSETPIXEL LPAREN Expression:e0 COMMA Expression:e1 COMMA Expression:e2 RPAREN SEMI
-               {: text.append("Meggy.setPixel( " + e0.value() + " , " + e1.value() + " , " + e2.value() + " );\n");  :}
+Statement_list ::= Statement Statement_list
+		   |
+		   Empty;
+
+Statement ::=  MEGGYSETPIXEL LPAREN Expression:e0 COMMA Expression:e1 COMMA Expression:e2 RPAREN 
+	       SEMI
+	       {:System.out.println(e0.lexeme + e1.lexeme + e2.lexeme);:}
                ;
 
-Expression ::= LPAREN BYTE RPAREN Expression:e {: text.append("(byte)" + e.value()); :} 
+Expression ::= LPAREN BYTE RPAREN Expression:e  {: RESULT = e; :}
                |
-               INT_LITERAL:intExpr  {: text.append(intExpr.intValue());  :}
+               INT_LITERAL:e  {: RESULT = e; :}
                |
-               COLOR_LITERAL: colorExpr {: text.append(colorExpr.value());  :};
+               COLOR_LITERAL:e {: RESULT = e;  :};
+
+Empty ::= ;
