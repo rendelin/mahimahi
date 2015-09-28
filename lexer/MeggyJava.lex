@@ -89,9 +89,9 @@ ToneLiteral          = "Meggy.Tone."("C3" | "D3" | "E3" | "F3" | "G3" | "A3" | "
   "extends"           {return symbol(sym.EXTENDS)}
   "new"               {return symbol(sym.NEW)}
   "import"            {return symbol(sym.IMPORT)}
+  "meggy.Meggy"       {return symbol(sym.MEGGY)}
 
   /* Meggy Java Constants */
-  "meggy.Meggy"              {return symbol(sym.MEGGY)}  
   {ColorLiteral}             {return symbol(sym.COLOR_LITERAL)}  
   {ButtonLiteral}            {return symbol(sym.BUTTON_LITERAL)}
   {ToneLiteral}              {return symbol(sym.TONE_LITERAL)}

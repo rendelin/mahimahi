@@ -1,0 +1,47 @@
+// CUP specification for a simple expression evaluator (w/ actions)
+import java_cup.runtime.*;
+
+/* Preliminaries to set up and use the scanner.  */
+init with {: scanner.init();              :};
+scan with {: return scanner.next_token(); :};
+
+/*********** Terminals (tokens returned by the scanner). ***********/
+/* operators */
+terminal            PLUS, MINUS, TIMES, ASSIGN, EQUAL, AND, LT, NOT, COMMA, DOT;
+terminal            LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI;
+
+/* types */
+terminal            BOOLEAN, INT, BYTE, STRING_TYPE, VOID, COLOR, BUTTON, TONE, STRING;
+
+terminal            IDENTIFIER;
+
+/* keywords */
+terminal            MAIN, IF, ELSE, WHILE, PUBLIC, RETURN, STATIC, THIS, CLASS, EXTENDS, NEW;
+
+/* constants */
+terminal  COLOR   COLOR_LITERAL;
+terminal  BUTTON  BUTTON_LITERAL;
+terminal  TONE    TONE_LITERAL;
+
+/* others */
+terminal            IMPORT, MEGGY;
+
+
+/*********** Non-terminals ***********/
+non terminal            Goal, MainClass, Statement, Expression;
+
+/* Precedences */
+precedence left  ASSIGN;
+precedence left  PLUS;
+precedence left  TIMES;
+precedence left  EQUAL, AND, LT;
+precedence right NOT, MINUS ;
+precedence left  DOT;
+
+/* The grammar */
+Goal   ::=     IMPORT MEGGY SEMI MainClass SEMI;
+
+MainClass ::=  CLASS IDENTIFIER LBRACE PUBLIC STATIC VOID MAIN LPAREN STRING LBRACKET RBRACKET IDENTIFIER RPAREN
+               LBRACE Statement RBRACE RBRACE;
+
+Statement ::=  BOOLEAN PLUS;
