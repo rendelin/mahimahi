@@ -2,7 +2,7 @@
 import java_cup.runtime.*;
 
 /* Preliminaries to set up and use the scanner.  */
-init with {: scanner.init();              :};
+init with {: scanner.init();   StringBuffer text = new StringBuffer(); :};
 scan with {: return scanner.next_token(); :};
 
 /*********** Terminals (tokens returned by the scanner). ***********/
@@ -19,12 +19,14 @@ terminal            IDENTIFIER;
 terminal            MAIN, IF, ELSE, WHILE, PUBLIC, RETURN, STATIC, THIS, CLASS, EXTENDS, NEW;
 
 /* constants */
+terminal  INT     INT_LITERAL;
 terminal  COLOR   COLOR_LITERAL;
 terminal  BUTTON  BUTTON_LITERAL;
 terminal  TONE    TONE_LITERAL;
 
 /* others */
 terminal            IMPORT, MEGGY;
+terminal            MEGGYSETPIXEL;
 
 
 /*********** Non-terminals ***********/
@@ -39,9 +41,23 @@ precedence right NOT, MINUS ;
 precedence left  DOT;
 
 /* The grammar */
-Goal   ::=     IMPORT MEGGY SEMI MainClass SEMI;
+Goal   ::=     IMPORT MEGGY SEMI 
+               {: text.append("import meggy.Meggy;");  :}
+               MainClass 
+               SEMI {: text.append(";\n"); :}
+               ;
 
-MainClass ::=  CLASS IDENTIFIER LBRACE PUBLIC STATIC VOID MAIN LPAREN STRING LBRACKET RBRACKET IDENTIFIER RPAREN
+MainClass ::=  CLASS IDENTIFIER:id 
+               {: test.append("class " + id.value() + "\n"); :}
+               LBRACE PUBLIC STATIC VOID MAIN LPAREN STRING LBRACKET RBRACKET IDENTIFIER RPAREN
                LBRACE Statement RBRACE RBRACE;
 
-Statement ::=  BOOLEAN PLUS;
+Statement ::=  MEGGYSETPIXEL LPAREN Expression:e0 COMMA Expression:e1 COMMA Expression:e2 RPAREN SEMI
+               {: text.append("Meggy.setPixel( " + e0.value() + " , " + e1.value() + " , " + e2.value() + " );\n");  :}
+               ;
+
+Expression ::= LPAREN BYTE RPAREN Expression:e {: text.append("(byte)" + e.value()); :} 
+               |
+               INT_LITERAL:intExpr  {: text.append(intExpr.intValue());  :}
+               |
+               COLOR_LITERAL: colorExpr {: text.append(colorExpr.value());  :};

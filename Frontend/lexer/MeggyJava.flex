@@ -23,6 +23,10 @@ import java.io.InputStream;
   }
 %}
 
+%eofval{
+  return sym.EOF;
+%eofval}
+
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace     = {LineTerminator} | [ \t\f] 
@@ -126,5 +130,3 @@ ToneLiteral          = "Meggy.Tone."("C3" | "D3" | "E3" | "F3" | "G3" | "A3" | "
 }
 
 [^]                    { throw new Error("Illegal character <" + yytext() + ">");}
-
-
