@@ -8,35 +8,43 @@
 <property name="package" location="src/mahimahi" />
 <property name="parser" location="${package}/parser"    />
 <property name="lexer"  location="${parser}/lexer"    />
+<property name="mjlexer.java" value="MeggyJavaLexer.java"/>
+<property name="mjparser.java" value="MeggyJavaParser.java"/>
+<property name="mjsym.java" value="sym.java"/>
 
-<target name="lexer">
+<!-- Build The Lexer -->
+<target name="Lexer">
   <tstamp/>
   <mkdir dir="${lexer}"/>
-  <java dir="${lexer}" jar="${lib}/jflex-1.6.1.jar" fork="true" 
-	maxmemory="128m">
+  <java jar="${lib}/jflex-1.6.1.jar" fork="true" 
+	maxmemory="128m" dir="${lexer}/" >
     <arg value="${grammar}/MeggyJava.flex"/>
   </java>
+  <move file="${grammar}/${mjlexer.java}" tofile="${lexer}/${mjlexer.java}"/>
 </target>
 
-<target name="parser">
+<!-- Build The Parser -->
+<target name="Parser">
   <tstamp/>
-  <mkdir dir="${parser}"/>
-  <java dir="${parser}/" jar="${lib}/java-cup-11a.jar" fork="true" 
+  <java jar="${lib}/java-cup-11a.jar" fork="true" 
 	maxmemory="128m">
     <arg value="-parser"/>
     <arg value="MeggyJavaParser"/>
     <arg value="${grammar}/MeggyJava.cup"/>
   </java>  
+<!-- It seems that JCup automatically moves generated file to the
+destination, so no need to move by hand -->
 </target>
 
-<target name="compiler" depends="lexer, parser">
+<target name="compiler" depends="Lexer, Parser">
 
 </target>
 
 
 
 <target name="clean">
-  <delete dir="${parser}"/>
+  <delete file="${mjparser}"/>
+  <delete file="${mjsym}"/>
   <delete dir="${lexer}"/>
 </target>
 </project>
