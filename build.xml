@@ -1,4 +1,4 @@
-<project name="mahimahiCompiler" default="" basedir=".">
+<project name="mahimahiCompiler" default="compiler" basedir=".">
 <description>
   Meggy Java Compiler build file
 </description>
@@ -27,6 +27,10 @@
     <arg value="MeggyJavaParser"/>
     <arg value="${grammar}/MeggyJava.cup"/>
   </java>  
+</target>
+
+<target name="compiler" depends="lexer, parser">
+
 </target>
 
 
