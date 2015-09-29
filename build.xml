@@ -1,0 +1,38 @@
+<project name="mahimahiCompiler" default="" basedir=".">
+<description>
+  Meggy Java Compiler build file
+</description>
+
+<property name="grammar" location="grammar"      />
+<property name="lib"    location="lib"           />
+<property name="package" location="src/mahimahi" />
+<property name="parser" location="${package}/parser"    />
+<property name="lexer"  location="${parser}/lexer"    />
+
+<target name="lexer">
+  <tstamp/>
+  <mkdir dir="${lexer}"/>
+  <java dir="${lexer}" jar="${lib}/jflex-1.6.1.jar" fork="true" 
+	maxmemory="128m">
+    <arg value="${grammar}/MeggyJava.flex"/>
+  </java>
+</target>
+
+<target name="parser">
+  <tstamp/>
+  <mkdir dir="${parser}"/>
+  <java dir="${parser}/" jar="${lib}/java-cup-11a.jar" fork="true" 
+	maxmemory="128m">
+    <arg value="-parser"/>
+    <arg value="MeggyJavaParser"/>
+    <arg value="${grammar}/MeggyJava.cup"/>
+  </java>  
+</target>
+
+
+
+<target name="clean">
+  <delete dir="${parser}"/>
+  <delete dir="${lexer}"/>
+</target>
+</project>
