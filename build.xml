@@ -26,14 +26,14 @@
 <!-- Build The Parser -->
 <target name="Parser">
   <tstamp/>
-  <java jar="${lib}/java-cup-11a.jar" fork="true" 
+  <java dir="${grammar}" jar="${lib}/java-cup-11a.jar" fork="true" 
 	maxmemory="128m">
     <arg value="-parser"/>
     <arg value="MeggyJavaParser"/>
     <arg value="${grammar}/MeggyJava.cup"/>
   </java>  
-<!-- It seems that JCup automatically moves generated file to the
-destination, so no need to move by hand -->
+  <move file="${grammar}/${mjparser.java}" tofile="${parser}/${mjparser.java}"/>
+  <move file="${grammar}/${mjsym.java}" tofile="${parser}/${mjsym.java}"/>
 </target>
 
 <target name="compiler" depends="Lexer, Parser">
@@ -43,8 +43,8 @@ destination, so no need to move by hand -->
 
 
 <target name="clean">
-  <delete file="${mjparser}"/>
-  <delete file="${mjsym}"/>
+  <delete file="${parser}/${mjparser.java}"/>
+  <delete file="${parser}/${mjsym.java}"/>
   <delete dir="${lexer}"/>
 </target>
 </project>
