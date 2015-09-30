@@ -1,4 +1,4 @@
-package mjparser;
+package mahimahi.parser;
 
 /* semantic value of token returned by scanner */
 public class SymbolValue {          
