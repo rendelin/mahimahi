@@ -16,11 +16,70 @@ import java.io.InputStream;
 
 %{
   StringBuffer string = new StringBuffer();
-  
-  private Symbol symbol(int type) {
-    SymbolValue value = new SymbolValue(yyline, yycolumn, yytext());
 
-    return new Symbol(type, yyline, yycolumn, value);
+  private Symbol symbol(int type) {
+    SymbolValue symValue;
+    int tokValue = -1;
+
+    if(type == sym.COLOR_LITERAL) {
+	String color = yytext().split(".")[2];
+
+	switch(color) {
+	case "DARK": tokValue = 0; break;
+	case "RED":  tokValue = 1; break;	    
+	case "ORANGE": tokValue = 2; break;
+	case "YELLOW": tokValue = 3; break;
+	case "GREEN":  tokValue = 4; break;	    
+	case "BLUE":   tokValue = 5; break;
+	case "VIOLET": tokValue = 6; break;    
+	case "WHITE":  tokValue = 7; break;
+	default:
+	    throw new LexerException("Color " + color, yyline, yycolumn);
+	}
+    }
+    else if(type == sym.BUTTON_LITERAL) {
+	String button = yytext().split(".")[2];
+
+	switch(button) {
+	case "B": tokValue = 1; break;
+	case "A": tokValue = 2; break;
+	case "Up": tokValue = 4; break;
+	case "Down": tokValue = 8; break;
+	case "Left": tokValue = 16; break;
+	case "Right": tokValue = 32; break;
+	default:
+	    throw new LexerException("Button " + button, yyline, yycolumn);
+	}
+    }else if(type == sym.TONE_LITERAL)  {
+	String tone = yytext().split(".")[2];
+
+	switch(tone) {
+	case "C3": tokValue = 61157; break;
+	case "Cs3": tokValue = 57724; break;
+ 	case "D3": tokValue = 54485; break;
+ 	case "Ds3": tokValue = 51427; break;
+ 	case "E3": tokValue = 48541; break;
+ 	case "F3": tokValue = 45816; break;
+ 	case "Fs3": tokValue = 43243; break;
+ 	case "G3": tokValue = 40816; break;
+ 	case "Gs3": tokValue = 38526; break;
+ 	case "A3": tokValue = 36363; break;
+ 	case "As3": tokValue = 34323; break;
+ 	case "B3": tokValue = 32397; break;
+	default:
+	    throw new LexerException("Tone " + tone, yyline, yycolumn);
+	}
+    } else if(type == sym.INT_LITERAL) {
+	tokValue = Integer.valueOf(yytext());
+    }
+    symValue = new SymbolValue(yyline, yycolumn, yytext(), tokValue);
+    return new Symbol(type, yyline, yycolumn, symValue);
+  }
+  
+  private Symbol symbol(int type, int value) {
+    SymbolValue symValue = new SymbolValue(yyline, yycolumn, yytext(), value);
+
+    return new Symbol(type, yyline, yycolumn, symValue);
   }
 
   private Symbol symbol(int type, Object value) {
@@ -123,8 +182,8 @@ ToneLiteral          = "Meggy.Tone."("C3" | "D3" | "E3" | "F3" | "G3" | "A3" | "
   {ButtonLiteral}            {return symbol(sym.BUTTON_LITERAL);}
   {ToneLiteral}              {return symbol(sym.TONE_LITERAL);}
   {DecIntegerLiteral}        {return symbol(sym.INT_LITERAL);}
-  "true"                     {return symbol(sym.TRUE);}
-  "false"                    {return symbol(sym.FALSE);}
+  "true"                     {return symbol(sym.TRUE, 1);}
+  "false"                    {return symbol(sym.FALSE, 0);}
 
   {Identifier}         {return symbol(sym.IDENTIFIER);}
 
