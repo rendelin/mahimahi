@@ -1,4 +1,4 @@
-package mjparser;
+package mahimahi.parser;
 
 /*
  * A ParseException includes an error message with the line and position of

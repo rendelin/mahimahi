@@ -1,5 +1,6 @@
 package mahimahi.parser.lexer;
 import mahimahi.parser.sym;
+import mahimahi.parser.SymbolValue;
 import java_cup.runtime.Symbol;
 import java.io.FileInputStream;
 import java.io.InputStream;
