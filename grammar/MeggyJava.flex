@@ -22,7 +22,7 @@ import java.io.InputStream;
     int tokValue = -1;
 
     if(type == sym.COLOR_LITERAL) {
-	String color = yytext().split(".")[2];
+	String color = yytext().split("[.]")[2];
 
 	switch(color) {
 	case "DARK": tokValue = 0; break;
@@ -38,7 +38,7 @@ import java.io.InputStream;
 	}
     }
     else if(type == sym.BUTTON_LITERAL) {
-	String button = yytext().split(".")[2];
+	String button = yytext().split("[.]")[2];
 
 	switch(button) {
 	case "B": tokValue = 1; break;
@@ -51,7 +51,7 @@ import java.io.InputStream;
 	    throw new LexerException("Button " + button, yyline, yycolumn);
 	}
     }else if(type == sym.TONE_LITERAL)  {
-	String tone = yytext().split(".")[2];
+	String tone = yytext().split("[.]")[2];
 
 	switch(tone) {
 	case "C3": tokValue = 61157; break;
