@@ -34,7 +34,7 @@ import java.io.InputStream;
 	case "VIOLET": tokValue = 6; break;    
 	case "WHITE":  tokValue = 7; break;
 	default:
-	    throw new LexerException("Color " + color, yyline, yycolumn);
+	    throw new LexerException("Color " + color, yyline+1, yycolumn+1);
 	}
     }
     else if(type == sym.BUTTON_LITERAL) {
@@ -48,7 +48,7 @@ import java.io.InputStream;
 	case "Left": tokValue = 16; break;
 	case "Right": tokValue = 32; break;
 	default:
-	    throw new LexerException("Button " + button, yyline, yycolumn);
+	    throw new LexerException("Button " + button, yyline+1, yycolumn+1);
 	}
     }else if(type == sym.TONE_LITERAL)  {
 	String tone = yytext().split("[.]")[2];
@@ -67,31 +67,31 @@ import java.io.InputStream;
  	case "As3": tokValue = 34323; break;
  	case "B3": tokValue = 32397; break;
 	default:
-	    throw new LexerException("Tone " + tone, yyline, yycolumn);
+	    throw new LexerException("Tone " + tone, yyline+1, yycolumn+1);
 	}
     } else if(type == sym.INT_LITERAL) {
 	tokValue = Integer.valueOf(yytext());
     }
-    symValue = new SymbolValue(yyline, yycolumn, yytext(), tokValue);
-    return new Symbol(type, yyline, yycolumn, symValue);
+    symValue = new SymbolValue(yyline+1, yycolumn+1, yytext(), tokValue);
+    return new Symbol(type, yyline+1, yycolumn+1, symValue);
   }
   
   private Symbol symbol(int type, int value) {
-    SymbolValue symValue = new SymbolValue(yyline, yycolumn, yytext(), value);
+    SymbolValue symValue = new SymbolValue(yyline+1, yycolumn+1, yytext(), value);
 
-    return new Symbol(type, yyline, yycolumn, symValue);
+    return new Symbol(type, yyline+1, yycolumn+1, symValue);
   }
 
   private Symbol symbol(int type, Object value) {
-    return new Symbol(type, yyline, yycolumn, value);
+    return new Symbol(type, yyline+1, yycolumn+1, value);
   }
 
   private SymbolValue symVal(String name, int value) {
-    return new SymbolValue(yyline, yycolumn, name, value);
+    return new SymbolValue(yyline+1, yycolumn+1, name, value);
   }
 
   private SymbolValue symVal(String name) {
-    return new SymbolValue(yyline, yycolumn, name);
+    return new SymbolValue(yyline+1, yycolumn+1, name);
   }
 
 %}
