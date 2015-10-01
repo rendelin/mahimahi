@@ -1,6 +1,7 @@
 // CUP specification for a simple expression evaluator (w/ actions)
 package mahimahi.parser;
 import mahimahi.parser.*;
+import mahimahi.util.TextFromJar;
 import java_cup.runtime.*;
 import java.util.*;
 import java.io.PrintWriter;
