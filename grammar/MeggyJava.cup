@@ -107,11 +107,11 @@ Statement_list ::= Statement Statement_list
 		   Empty;
 
 Statement ::=  MEGGYSETPIXEL LPAREN Expression:e0 
-{:  parser.out.println("ldi r24, lo8("+e0.lexeme+")"); :}
+{:  parser.out.println("ldi r24, lo8("+e0.value+")"); :}
                COMMA Expression:e1 
-{:  parser.out.println("ldi r22, lo8("+e1.lexeme+")"); :}
+{:  parser.out.println("ldi r22, lo8("+e1.value+")"); :}
                COMMA Expression:e2 
-{:  parser.out.println("ldi r20, lo8("+e2.lexeme+")"); :}
+{:  parser.out.println("ldi r20, lo8("+e2.value+")"); :}
                RPAREN SEMI
 {:  
    /* At this point, arguments should already be loaded */ 
