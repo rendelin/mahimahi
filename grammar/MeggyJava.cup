@@ -90,6 +90,7 @@ Goal   ::=     IMPORT MEGGY SEMI
 
 MainClass ::=  CLASS IDENTIFIER:id 
 {: List<String> prolog;
+
  sout = new PrintStream(new FileOutputStream(id.lexeme + ".java.s")); 
  parser.out = new PrintWriter(sout);
  /* Loading prolog snippet */
@@ -98,16 +99,25 @@ MainClass ::=  CLASS IDENTIFIER:id
      parser.out.println(proline);
  :}
                LBRACE PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LBRACKET RBRACKET IDENTIFIER RPAREN
-               LBRACE Statement RBRACE RBRACE
+               LBRACE Statement_list RBRACE RBRACE
 	       {: parser.out.flush(); :};
 
 Statement_list ::= Statement Statement_list
 		   |
 		   Empty;
 
-Statement ::=  MEGGYSETPIXEL LPAREN Expression:e0 COMMA Expression:e1 COMMA Expression:e2 RPAREN 
-	       SEMI
-	       {:System.out.println(e0.lexeme + e1.lexeme + e2.lexeme);:}
+Statement ::=  MEGGYSETPIXEL LPAREN Expression:e0 
+{:  parser.out.println("ldi r24, lo8("+e0.lexeme+")"); :}
+               COMMA Expression:e1 
+{:  parser.out.println("ldi r22, lo8("+e1.lexeme+")"); :}
+               COMMA Expression:e2 
+{:  parser.out.println("ldi r20, lo8("+e2.lexeme+")"); :}
+               RPAREN SEMI
+{:  
+   /* At this point, arguments should already be loaded */ 
+ parser.out.println("call _Z6DrawPxhhh");
+ parser.out.println("call _Z12DisplaySlatev");
+ :}
                ;
 
 Expression ::= LPAREN BYTE RPAREN Expression:e  {: RESULT = e; :}
