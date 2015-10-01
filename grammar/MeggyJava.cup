@@ -89,7 +89,7 @@ Goal   ::=     IMPORT MEGGY SEMI
                ;
 
 MainClass ::=  CLASS IDENTIFIER:id 
-{: List<String> prolog;
+{: List<String> prolog, epilog;
 
  sout = new PrintStream(new FileOutputStream(id.lexeme + ".java.s")); 
  parser.out = new PrintWriter(sout);
@@ -100,7 +100,10 @@ MainClass ::=  CLASS IDENTIFIER:id
  :}
                LBRACE PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LBRACKET RBRACKET IDENTIFIER RPAREN
                LBRACE Statement_list RBRACE RBRACE
-	       {: parser.out.flush(); :};
+	       {: epilog = TextFromJar.readtextFromJar("avrF.rtl.s");
+                  for(String epiline: epilog)
+                    parser.out.println(epiline);
+                  parser.out.flush(); :};
 
 Statement_list ::= Statement Statement_list
 		   |
