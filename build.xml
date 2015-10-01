@@ -14,7 +14,6 @@
 
 <!-- Build The Lexer -->
 <target name="Lexer">
-  <tstamp/>
   <mkdir dir="${lexer}"/>
   <java jar="${lib}/jflex-1.6.1.jar" fork="true" 
 	maxmemory="128m" dir="${lexer}/" >
@@ -25,7 +24,6 @@
 
 <!-- Build The Parser -->
 <target name="Parser">
-  <tstamp/>
   <java dir="${grammar}" jar="${lib}/java-cup-11a.jar" fork="true" 
 	maxmemory="128m">
     <arg value="-parser"/>
@@ -45,6 +43,6 @@
 <target name="clean">
   <delete file="${parser}/${mjparser.java}"/>
   <delete file="${parser}/${mjsym.java}"/>
-  <delete dir="${lexer}"/>
+  <delete file="${lexer}/${mjlexer.java}"/>
 </target>
 </project>

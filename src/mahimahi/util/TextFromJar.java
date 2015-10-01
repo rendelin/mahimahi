@@ -1,4 +1,4 @@
-package cisc672;
+package mahimahi.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TextFromJar {
-	public List<String> readTextFromJar(String filename) {
+	static.public List<String> readTextFromJar(String filename) {
 		InputStream is = null;
 		BufferedReader reader = null;
 		String line;
